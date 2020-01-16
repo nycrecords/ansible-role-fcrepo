@@ -5,7 +5,6 @@
     owner: "{{ fcrepo_user }}"
     group: "{{ fcrepo_user }}"
   with_items:
-    - claw.cnd
     - fcrepo-config.xml
   notify: restart tomcat8
 

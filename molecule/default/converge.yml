@@ -41,9 +41,6 @@
       - -Dfcrepo.modeshape.configuration=file:{{ fcrepo_config_dir }}/repository.json
       - -Dfcrepo.home={{ fcrepo_home_dir }}
 
-    # Role: FCrepo
-
-    
   roles:
     - role: nycrecords.rhsm
     - role: nycrecords.postgresql

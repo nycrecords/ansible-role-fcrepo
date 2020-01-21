@@ -1,7 +1,6 @@
 import os
 
 import testinfra.utils.ansible_runner
-import requests
 
 testinfra_hosts = testinfra.utils.ansible_runner.AnsibleRunner(
     os.environ["MOLECULE_INVENTORY_FILE"]
@@ -21,10 +20,12 @@ def test_fcrepo_listening(host):
 
     assert socket.is_listening
 
+
 def test_fcrepo_active(host):
     response = host.check_output("curl http://127.0.0.1:8080/fcrepo/rest")
 
-    assert """<http://127.0.0.1:8080/fcrepo/rest/>
+    assert (
+        """<http://127.0.0.1:8080/fcrepo/rest/>
         rdf:type                       ldp:RDFSource ;
         rdf:type                       ldp:Container ;
         rdf:type                       ldp:BasicContainer ;
@@ -32,4 +33,6 @@ def test_fcrepo_active(host):
         rdf:type                       fedora:RepositoryRoot ;
         rdf:type                       fedora:Resource ;
         rdf:type                       fedora:Container ;
-        fedora:hasTransactionProvider  <http://127.0.0.1:8080/fcrepo/rest/fcr:tx> .""" in response
+        fedora:hasTransactionProvider  <http://127.0.0.1:8080/fcrepo/rest/fcr:tx> ."""
+        in response
+    )

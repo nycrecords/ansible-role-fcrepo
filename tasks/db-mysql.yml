@@ -11,4 +11,4 @@
     name: "{{ fcrepo_db_user }}"
     password: "{{ fcrepo_db_password }}"
     state: present
-    priv: "{{fcrepo_db_name}}.*:ALL"
+    priv: "{{ fcrepo_db_name }}.*:ALL"

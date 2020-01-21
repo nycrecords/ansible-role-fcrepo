@@ -1,6 +1,12 @@
 Ansible Role: Fedora
 ====================
 
+![GitHub](https://img.shields.io/github/license/nycrecords/ansible-role-fcrepo)
+[![Build Status](https://travis-ci.com/nycrecords/ansible-role-fcrepo.svg?branch=master)](https://travis-ci.com/nycrecords/ansible-role-fcrepo)
+[![Galaxy](https://img.shields.io/badge/galaxy-nycrecords.fcrepo-blue.svg)](https://galaxy.ansible.com/nycrecords/fcrepo)
+![Ansible](https://img.shields.io/ansible/role/d/90495)
+![Ansible](https://img.shields.io/ansible/quality/90495)
+
 An Ansible role that installs Fedora 4 in a Tomcat 8 servlet container on:
 
 * Centos/RHEL 7.x

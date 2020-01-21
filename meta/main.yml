@@ -1,11 +1,11 @@
 ---
 galaxy_info:
-  author: Islandora
-  description: Ansible Galaxy role for installing Fedora 4
-  company: Islandora Foundation
+  role_name: fcrepo
+  author: NYC Records
+  description: Ansible Galaxy role for installing fcrepo
+  company: City of New York, Department of Records and Information Services
   license: MIT
-  min_ansible_version: 2.0
-  max_ansible_version: 2.3
+  min_ansible_version: 2.4
   platforms:
   - name: Ubuntu
     versions:
@@ -14,9 +14,9 @@ galaxy_info:
     versions:
       - 7
   galaxy_tags:
-    - fedora
-    - islandora
-    - CLAW
-    - repository
-    - ldp
+    - tomcat
+    - servlet
+    - container
     - installer
+    - web
+    - fcrepo

@@ -6,7 +6,7 @@
     group: "{{ fcrepo_user }}"
   with_items:
     - fcrepo-config.xml
-  notify: restart tomcat8
+  notify: restart tomcat
 
 - name: Copy templated repository.json
   template:
@@ -14,7 +14,7 @@
     dest: "{{ fcrepo_home_dir }}/configs/repository.json"
     owner: "{{ fcrepo_user }}"
     group: "{{ fcrepo_user }}"
-  notify: restart tomcat8
+  notify: restart tomcat
 
 - name: Copy fedora activemq configuration
   template:
@@ -22,7 +22,7 @@
     dest: "{{ fcrepo_config_dir }}/activemq.xml"
     owner: "{{ fcrepo_user }}"
     group: "{{ fcrepo_user }}"
-  notify: restart tomcat8
+  notify: restart tomcat
 
 - name: Template out allowed external content paths
   template:
@@ -30,4 +30,4 @@
     dest: "{{ fcrepo_allowed_external_content_file }}"
     owner: "{{ fcrepo_user }}"
     group: "{{ fcrepo_user }}"
-  notify: restart tomcat8
+  notify: restart tomcat

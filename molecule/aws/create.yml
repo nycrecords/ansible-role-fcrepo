@@ -3,9 +3,9 @@
   hosts: localhost
   connection: local
   gather_facts: false
-  no_log: "{{ molecule_no_log }}"
+  no_log: "{{ not (lookup('env', 'MOLECULE_DEBUG') | bool or molecule_yml.provisioner.log|default(false) | bool) }}"
   vars:
-    ssh_user: ubuntu
+    ssh_user: "{{ molecule_yml.provisioner.connection_options.ansible_user }}"
     ssh_port: 22
 
     security_group_name: molecule
@@ -25,7 +25,7 @@
         to_port: 0
         cidr_ip: '0.0.0.0/0'
 
-    keypair_name: molecule_key
+    keypair_name: ansible_role_tomcat_molecule_key
     keypair_path: "{{ lookup('env', 'MOLECULE_EPHEMERAL_DIRECTORY') }}/ssh_key"
   tasks:
     - name: Create security group
@@ -34,6 +34,8 @@
         description: "{{ security_group_name }}"
         rules: "{{ security_group_rules }}"
         rules_egress: "{{ security_group_rules_egress }}"
+        state: present
+      register: security_group_id
 
     - name: Test for presence of local keypair
       stat:
@@ -51,43 +53,30 @@
         name: "{{ keypair_name }}"
       register: keypair
 
-    - name: Persist the keypair
+    - name: Persist the keypair #noqa 503
       copy:
         dest: "{{ keypair_path }}"
         content: "{{ keypair.key.private_key }}"
         mode: 0600
       when: keypair.changed
 
-    - name: Get the ec2 ami(s) by owner and name, if image not set
-      ec2_ami_facts:
-        owners: "{{ item.image_owner }}"
-        filters:
-          name: "{{ item.image_name }}"
-      loop: "{{ molecule_yml.platforms }}"
-      when: item.image is not defined
-      register: ami_facts
-
     - name: Create molecule instance(s)
       ec2:
         key_name: "{{ keypair_name }}"
-        image: "{{ item.image
-          if item.image is defined
-          else (ami_facts.results[index].images | sort(attribute='creation_date', reverse=True))[0].image_id }}"
+        image: "{{ item.image }}"
         instance_type: "{{ item.instance_type }}"
         vpc_subnet_id: "{{ item.vpc_subnet_id }}"
-        group: "{{ security_group_name }}"
-        instance_tags: "{{ item.instance_tags | combine({'instance': item.name})
-          if item.instance_tags is defined
-          else {'instance': item.name} }}"
+        group_id: "{{ security_group_id.group_id }}"
+        instance_tags:
+          instance: "{{ item.name }}"
+          Name: "ansible-role-tomcat"
         wait: true
         assign_public_ip: true
         exact_count: 1
         count_tag:
           instance: "{{ item.name }}"
       register: server
-      loop: "{{ molecule_yml.platforms }}"
-      loop_control:
-        index_var: index
+      with_items: "{{ molecule_yml.platforms }}"
       async: 7200
       poll: 0
 
@@ -101,11 +90,14 @@
 
     # Mandatory configuration for Molecule to function.
 
+    - debug:
+        msg: "{{ ec2_jobs }}"
+
     - name: Populate instance config dict
       set_fact:
         instance_conf_dict: {
-          'instance': "{{ item.instances[0].tags.instance }}",
-          'address': "{{ item.instances[0].public_ip }}",
+          'instance': "{{ item.tagged_instances[0].tags.instance }}",
+          'address': "{{ item.tagged_instances[0].public_ip }}",
           'user': "{{ ssh_user }}",
           'port': "{{ ssh_port }}",
           'identity_file': "{{ keypair_path }}",
@@ -133,7 +125,3 @@
         delay: 10
         timeout: 320
       with_items: "{{ lookup('file', molecule_instance_config) | molecule_from_yaml }}"
-
-    - name: Wait for boot process to finish
-      pause:
-        minutes: 2

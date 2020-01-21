@@ -18,12 +18,12 @@ fcrepo_version: 4.7.2
 
 User with permissions to install:
 ```
-fcrepo_user: {{ tomcat8_server_user }}
+fcrepo_user: {{ tomcat_server_user }}
 ```
 
 Path to put Fedora data directory (see the notes section below)
 ```
-fcrepo_data_dir: /var/lib/tomcat8/fcrepo4-data
+fcrepo_data_dir: /var/lib/tomcat/fcrepo4-data
 ```
 
 A home directory for Fedora
@@ -33,7 +33,7 @@ fcrepo_home_dir: /opt/fcrepo
 
 Where to put the Fedora war file
 ```
-fcrepo_war_path: "{{ tomcat8_home }}/webapps/fcrepo.war"
+fcrepo_war_path: "{{ tomcat_home }}/webapps/fcrepo.war"
 ```
 
 The activemq configuration file template name
@@ -98,7 +98,7 @@ fcrepo_allowed_external_content:
 
 ## Dependencies
 
-* islandora.tomcat8
+* islandora.tomcat
  
 ## Example Playbook
 

@@ -9,12 +9,22 @@ lint:
   name: yamllint
 platforms:
   - name: instance
-    box: ubuntu/xenial64
+    box: ${VAGRANT_DEFAULT_BOX:-generic/rhel7}
+    instance_raw_config_args:
+      - "vm.network 'forwarded_port', guest: 8080, host: 10080"
 provisioner:
   name: ansible
   lint:
     name: ansible-lint
+  playbooks:
+    converge: converge.yml
+    cleanup: cleanup.yml
+  inventory:
+    host_vars:
+      instance:
+        environment: vagrant
 verifier:
   name: testinfra
+  directory: ../resources/tests/
   lint:
     name: flake8
